@@ -1,0 +1,10 @@
+[package]
+name = "coflows_scheduler"
+version = "0.1.0"
+keywords = ["coflows scheduler"]
+description = "coflows scheduler"
+entrypoint = "cargo run"
+
+[coflows_scheduler]
+name = "coflows_scheduler"
+description = "coflows scheduler"
