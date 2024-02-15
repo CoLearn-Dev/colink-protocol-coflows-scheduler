@@ -28,7 +28,6 @@ impl Scheduler {
                 if task.protocol_name != "coflows_dispatch" {
                     continue;
                 }
-                println!("22");
                 let json_str = String::from_utf8_lossy(&task.protocol_param);
                 let flow_tasks: FlowTasks = serde_json::from_str(&json_str)?;
                 let mut queues = QUEUES.lock().await;
