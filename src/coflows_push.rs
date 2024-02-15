@@ -34,7 +34,7 @@ impl ProtocolEntry for Receiver {
         let message_id = if participants.len() == 1 {
             flow_task.message_id
         } else {
-            let msg = cl.recv_variable("output", &participants[0]).await?;
+            let msg = cl.recv_variable("msg", &participants[0]).await?;
             let message_id = flow_task.message_id;
             cl.create_entry(&message_id, &msg).await?;
             message_id
