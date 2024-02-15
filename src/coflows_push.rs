@@ -2,7 +2,7 @@ use crate::{queues::*, FlowTask, FlowTasks};
 use colink::*;
 use std::collections::VecDeque;
 
-struct Initiator;
+pub struct Initiator;
 #[colink::async_trait]
 impl ProtocolEntry for Initiator {
     async fn start(
@@ -20,7 +20,7 @@ impl ProtocolEntry for Initiator {
     }
 }
 
-struct Receiver;
+pub struct Receiver;
 #[colink::async_trait]
 impl ProtocolEntry for Receiver {
     async fn start(
