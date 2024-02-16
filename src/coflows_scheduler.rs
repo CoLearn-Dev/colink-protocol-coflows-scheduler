@@ -33,13 +33,16 @@ impl Scheduler {
                 let mut queues = QUEUES.lock().await;
                 let queue = queues.get_mut(&flow_tasks.flow_id).unwrap();
                 for _ in 0..flow_tasks.message_ids.len() {
-                    queue.pop_front().unwrap();
+                    queue.pop_front().unwrap(); // TODO check message_id == pop_front?
                 }
+                let mut message_ids = vec![];
                 if !queue.is_empty() {
-                    let mut message_ids = vec![];
-                    #[allow(clippy::get_first)]
+                    #[allow(clippy::get_first)] // TODO push more than one messages
                     let id = queue.get(0).unwrap().clone();
                     message_ids.push(id);
+                }
+                drop(queues);
+                if !message_ids.is_empty() {
                     let participants = vec![Participant {
                         user_id: self.cl.get_user_id()?,
                         role: "local".to_string(),
@@ -57,7 +60,6 @@ impl Scheduler {
                         )
                         .await?;
                 }
-                drop(queues);
             }
         }
     }
