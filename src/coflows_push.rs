@@ -66,11 +66,14 @@ impl ProtocolEntry for Receiver {
         }
         let mut queues = QUEUES.lock().await;
         if !queues.contains_key(&flow_task.flow_id) {
-            queues.insert(flow_task.flow_id.clone(), VecDeque::new());
+            queues.insert(
+                flow_task.flow_id.clone(),
+                (dispatch_point.clone(), VecDeque::new()),
+            );
         }
-        let queue = queues.get_mut(&flow_task.flow_id).unwrap();
+        let (_, queue) = queues.get_mut(&flow_task.flow_id).unwrap();
         if queue.is_empty() {
-            queue.push_back((message_id.clone(), dispatch_point.clone()));
+            queue.push_back(message_id.clone());
             drop(queues);
             let message_ids = vec![message_id.clone()];
             let participants = vec![Participant {
@@ -89,7 +92,7 @@ impl ProtocolEntry for Receiver {
             )
             .await?;
         } else {
-            queue.push_back((message_id, dispatch_point));
+            queue.push_back(message_id);
             drop(queues);
         }
         Ok(())

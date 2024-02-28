@@ -31,18 +31,17 @@ impl Scheduler {
                 let json_str = String::from_utf8_lossy(&task.protocol_param);
                 let flow_tasks: FlowTasks = serde_json::from_str(&json_str)?;
                 let mut queues = QUEUES.lock().await;
-                let queue = queues.get_mut(&flow_tasks.flow_id).unwrap();
+                let (dispatch_point, queue) = queues.get_mut(&flow_tasks.flow_id).unwrap();
                 for _ in 0..flow_tasks.message_ids.len() {
                     queue.pop_front().unwrap(); // TODO check message_id == pop_front?
                 }
-                let mut dispatch_point = "coflows_dispatch".to_string();
                 let mut message_ids = vec![];
                 if !queue.is_empty() {
                     #[allow(clippy::get_first)] // TODO push more than one messages
                     let id = queue.get(0).unwrap().clone();
-                    message_ids.push(id.0);
-                    dispatch_point = id.1;
+                    message_ids.push(id);
                 }
+                let dispatch_point = dispatch_point.clone();
                 drop(queues);
                 if !message_ids.is_empty() {
                     let participants = vec![Participant {
