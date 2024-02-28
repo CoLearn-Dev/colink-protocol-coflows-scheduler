@@ -2,5 +2,6 @@ use once_cell::sync::Lazy;
 use std::collections::{HashMap, VecDeque};
 use tokio::sync::Mutex;
 
-pub static QUEUES: Lazy<Mutex<HashMap<String, VecDeque<String>>>> =
+#[allow(clippy::type_complexity)]
+pub static QUEUES: Lazy<Mutex<HashMap<String, VecDeque<(String, String)>>>> =
     Lazy::new(|| Mutex::new(HashMap::new()));

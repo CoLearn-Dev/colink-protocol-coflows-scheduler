@@ -25,7 +25,7 @@ impl Scheduler {
                     .read_entry(&format!("_internal:tasks:{}", task_id.task_id))
                     .await?;
                 let task: Task = prost::Message::decode(&*res).unwrap();
-                if task.protocol_name != "coflows_dispatch" {
+                if task.protocol_name.contains("dispatch") {
                     continue;
                 }
                 let json_str = String::from_utf8_lossy(&task.protocol_param);
@@ -35,11 +35,13 @@ impl Scheduler {
                 for _ in 0..flow_tasks.message_ids.len() {
                     queue.pop_front().unwrap(); // TODO check message_id == pop_front?
                 }
+                let mut dispatch_point = "coflows_dispatch".to_string();
                 let mut message_ids = vec![];
                 if !queue.is_empty() {
                     #[allow(clippy::get_first)] // TODO push more than one messages
                     let id = queue.get(0).unwrap().clone();
-                    message_ids.push(id);
+                    message_ids.push(id.0);
+                    dispatch_point = id.1;
                 }
                 drop(queues);
                 if !message_ids.is_empty() {
@@ -49,7 +51,7 @@ impl Scheduler {
                     }];
                     self.cl
                         .run_task(
-                            "coflows_dispatch",
+                            &dispatch_point,
                             serde_json::to_string(&FlowTasks {
                                 flow_id: flow_tasks.flow_id,
                                 message_ids,
