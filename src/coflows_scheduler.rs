@@ -25,7 +25,7 @@ impl Scheduler {
                     .read_entry(&format!("_internal:tasks:{}", task_id.task_id))
                     .await?;
                 let task: Task = prost::Message::decode(&*res).unwrap();
-                if task.protocol_name.contains("dispatch") {
+                if !task.protocol_name.contains("dispatch") {
                     continue;
                 }
                 let json_str = String::from_utf8_lossy(&task.protocol_param);
