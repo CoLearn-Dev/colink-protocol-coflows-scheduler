@@ -32,6 +32,11 @@ impl Scheduler {
                 let flow_tasks: FlowTasks = serde_json::from_str(&json_str)?;
                 let mut queues = QUEUES.lock().await;
                 let (dispatch_point, queue) = queues.get_mut(&flow_tasks.flow_id).unwrap();
+                if queue.is_none() {
+                    drop(queues);
+                    continue;
+                }
+                let queue = queue.as_mut().unwrap();
                 for _ in 0..flow_tasks.message_ids.len() {
                     queue.pop_front().unwrap(); // TODO check message_id == pop_front?
                 }
