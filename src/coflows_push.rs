@@ -55,7 +55,7 @@ impl ProtocolEntry for Receiver {
                 let flow_endpoint = data["flow_endpoint"].as_str().unwrap();
                 let user_id = data["user_id"].as_str().unwrap();
                 if let Ok(res) = cl
-                    .read_entry(&format!("flows:{}:parallel_dispatch ", flow_endpoint))
+                    .read_entry(&format!("flows:{}:parallel_dispatch", flow_endpoint))
                     .await
                 {
                     if res[0] > 0 {
